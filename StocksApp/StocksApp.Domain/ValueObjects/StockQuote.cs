@@ -1,6 +1,6 @@
-﻿namespace StocksApp.Application.DTO
+﻿namespace StocksApp.Domain.ValueObjects
 {
-    public class QuoteResponse
+    public class StockQuote
     {
         public float c { get; set; }  // Current price
         public float h { get; set; }  // High price of the day

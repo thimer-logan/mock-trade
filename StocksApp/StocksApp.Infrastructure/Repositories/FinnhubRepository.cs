@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using StocksApp.Application.Interfaces;
-using System.Text.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using StocksApp.Domain.Interfaces;
+using StocksApp.Domain.ValueObjects;
 
 namespace StocksApp.Infrastructure.Repositories
 {
@@ -10,6 +12,12 @@ namespace StocksApp.Infrastructure.Repositories
         private readonly HttpClient _httpClient;
         private readonly ILogger<FinnhubRepository> _logger;
         private readonly string _apiKey;
+
+        JsonLoadSettings jsonLoadSettings = new JsonLoadSettings
+        {
+            CommentHandling = CommentHandling.Ignore,
+            LineInfoHandling = LineInfoHandling.Ignore
+        };
 
         public FinnhubRepository(HttpClient httpClient, IConfiguration configuration, ILogger<FinnhubRepository> logger)
         {
@@ -20,83 +28,96 @@ namespace StocksApp.Infrastructure.Repositories
             _apiKey = configuration["Finnhub:ApiKey"] ?? throw new ArgumentNullException("Finnhub API key not found");
         }
 
-        public async Task<Dictionary<string, object>?> GetCompanyProfileAsync(string symbol)
+        public async Task<CompanyProfile?> GetCompanyProfileAsync(string symbol)
         {
-            var response = await _httpClient.GetAsync($"/api/v1/profile2?symbol={symbol}&token={_apiKey}");
+            var response = await _httpClient.GetAsync($"/api/v1/stock/profile2?symbol={symbol}&token={_apiKey}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            Dictionary<string, object>? responseDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
 
-            if (responseDictionary == null)
+            if (string.IsNullOrWhiteSpace(content))
             {
-                throw new InvalidOperationException("Failed to deserialize response from Finnhub");
+                throw new InvalidOperationException("Error fetching company data from Finnhub.");
             }
 
-            if (responseDictionary.ContainsKey("error"))
+            if (content.Contains("\"error\""))
             {
-                throw new InvalidOperationException(Convert.ToString(responseDictionary["error"]));
+                throw new InvalidOperationException($"Error fetching company data from Finnhub: {content}");
             }
 
-            return responseDictionary;
+            var company = JsonConvert.DeserializeObject<CompanyProfile>(content);
+
+            return company;
         }
 
-        public async Task<Dictionary<string, object>?> GetStockPriceQuoteAsync(string symbol)
+        public async Task<StockQuote?> GetStockPriceQuoteAsync(string symbol)
         {
             var response = await _httpClient.GetAsync($"/api/v1/quote?symbol={symbol}&token={_apiKey}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            Dictionary<string, object>? responseDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
 
-            if (responseDictionary == null)
+            if (string.IsNullOrWhiteSpace(content))
             {
-                throw new InvalidOperationException("Failed to deserialize response from Finnhub");
+                throw new InvalidOperationException("Error fetching stock quote from Finnhub.");
             }
 
-            if (responseDictionary.ContainsKey("error"))
+            if (content.Contains("\"error\""))
             {
-                throw new InvalidOperationException(Convert.ToString(responseDictionary["error"]));
+                throw new InvalidOperationException($"Error fetching stock quote from Finnhub: {content}");
             }
 
-            return responseDictionary;
+            var quote = JsonConvert.DeserializeObject<StockQuote>(content);
+
+            return quote;
         }
 
-        public async Task<List<Dictionary<string, string>>?> GetStocksAsync()
+        public async Task<IEnumerable<Stock>?> GetStocksAsync()
         {
-            var response = await _httpClient.GetAsync($"/api/v1/stock/symbol&token={_apiKey}");
+            var response = await _httpClient.GetAsync($"/api/v1/stock/symbol?exchange=US&token={_apiKey}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            List<Dictionary<string, string>>? responseDictionary = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(content);
 
-            if (responseDictionary == null)
+            if (string.IsNullOrWhiteSpace(content))
             {
-                throw new InvalidOperationException("Failed to deserialize response from Finnhub");
+                throw new InvalidOperationException("Error fetching stocks from Finnhub.");
             }
 
-            return responseDictionary;
+            if (content.Contains("\"error\""))
+            {
+                throw new InvalidOperationException($"Error fetching stocks from Finnhub: {content}");
+            }
+
+            var stockData = JsonConvert.DeserializeObject<List<Stock>>(content);
+
+            return stockData;
         }
 
-        public async Task<Dictionary<string, object>?> SearchStocksAsync(string symbol)
+        public async Task<List<StockSearch>?> SearchStocksAsync(string symbol)
         {
-            var response = await _httpClient.GetAsync($"/api/v1/search?q={symbol}&token={_apiKey}");
-            response.EnsureSuccessStatusCode();
+            //var response = await _httpClient.GetAsync($"/api/v1/search?q={symbol}&token={_apiKey}");
+            //response.EnsureSuccessStatusCode();
 
-            var content = await response.Content.ReadAsStringAsync();
-            Dictionary<string, object>? responseDictionary = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
+            //var content = await response.Content.ReadAsStringAsync();
 
-            if (responseDictionary == null)
-            {
-                throw new InvalidOperationException("Failed to deserialize response from Finnhub");
-            }
+            //if (string.IsNullOrWhiteSpace(content))
+            //{
+            //    throw new InvalidOperationException("Error fetching stocks from Finnhub.");
+            //}
 
-            if (responseDictionary.ContainsKey("error"))
-            {
-                throw new InvalidOperationException(Convert.ToString(responseDictionary["error"]));
-            }
+            //if (content.Contains("\"error\""))
+            //{
+            //    throw new InvalidOperationException($"Error fetching stocks from Finnhub: {content}");
+            //}
 
-            return responseDictionary;
+            //// Response has a different structure than the other endpoints
+            //// It has a "count" and "result" key that contains the search results
+            //var searchResults = JsonSerializer.Deserialize<StockSearchResponse>(content)?.Result;
+
+
+            //return searchResults;
+            throw new NotImplementedException();
         }
     }
 }
