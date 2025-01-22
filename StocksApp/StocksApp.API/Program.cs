@@ -1,7 +1,12 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using StocksApp.Application.Interfaces.Finnhub;
 using StocksApp.Application.Services.Finnhub;
+using StocksApp.Domain.Entities.Identity;
 using StocksApp.Domain.Interfaces;
+using StocksApp.Infrastructure.DbContext;
 using StocksApp.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +24,11 @@ builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, 
 
 builder.Services.AddControllers();
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
+
 builder.Services.AddTransient<IFinnhubCompanyProfileService, FinnhubCompanyProfileService>();
 builder.Services.AddTransient<IFinnhubStockPriceQuoteService, FinnhubStockPriceQuoteService>();
 builder.Services.AddTransient<IFinnhubStockSearchService, FinnhubStockSearchService>();
@@ -32,6 +42,42 @@ builder.Services.AddHttpClient<IFinnhubRepository, FinnhubRepository>(client =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
+{
+    options.Password.RequiredLength = 5;
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+}).AddEntityFrameworkStores<AppDbContext>()
+  .AddDefaultTokenProviders()
+  .AddUserStore<UserStore<ApplicationUser, ApplicationRole, AppDbContext, Guid>>()
+  .AddRoleStore<RoleStore<ApplicationRole, AppDbContext, Guid>>();
+
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+// .AddJwtBearer(options =>
+// {
+//     options.TokenValidationParameters = new TokenValidationParameters()
+//     {
+//         ValidateAudience = true,
+//         ValidAudience = builder.Configuration["Jwt:Audience"],
+//         ValidateIssuer = true,
+//         ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//         ValidateLifetime = true,
+//         ValidateIssuerSigningKey = true,
+//         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+//     };
+// });
+
+//builder.Services.AddAuthorization(options =>
+//{
+//});
 
 var app = builder.Build();
 
