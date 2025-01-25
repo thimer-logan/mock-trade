@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
@@ -20,13 +22,22 @@ var builder = WebApplication.CreateBuilder(args);
 //Serilog
 builder.Host.UseSerilog((HostBuilderContext context, IServiceProvider services, LoggerConfiguration loggerConfiguration) =>
 {
-
     loggerConfiguration
     .ReadFrom.Configuration(context.Configuration) //read configuration settings from built-in IConfiguration
     .ReadFrom.Services(services); //read out current app's services and make them available to serilog
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    //options.Filters.Add(new ProducesAttribute("application/json"));
+    //options.Filters.Add(new ConsumesAttribute("application/json"));
+
+    // Authorization policy
+    var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+    options.Filters.Add(new AuthorizeFilter(policy));
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -70,8 +81,8 @@ builder.Services.AddAuthentication(options =>
  {
      options.TokenValidationParameters = new TokenValidationParameters()
      {
-         ValidateAudience = true,
-         ValidAudience = builder.Configuration["Jwt:Audience"],
+         ValidateAudience = false,
+         //ValidAudience = builder.Configuration["Jwt:Audience"],
          ValidateIssuer = true,
          ValidIssuer = builder.Configuration["Jwt:Issuer"],
          ValidateLifetime = true,

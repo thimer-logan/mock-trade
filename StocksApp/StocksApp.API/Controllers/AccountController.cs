@@ -8,8 +8,10 @@ using System.Security.Claims;
 
 namespace StocksApp.API.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     [AllowAnonymous]
-    public class AccountController : CustomControllerBase
+    public class AccountController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
