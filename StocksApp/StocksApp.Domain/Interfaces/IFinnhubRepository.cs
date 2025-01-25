@@ -35,6 +35,6 @@ namespace StocksApp.Domain.Interfaces
         /// </summary>
         /// <param name="symbol">Stock symbol to search</param>
         /// <returns>List of matching stocks</returns>
-        Task<List<StockSearch>?> SearchStocksAsync(string symbol);
+        Task<IEnumerable<StockSearch>?> SearchStocksAsync(string symbol);
     }
 }

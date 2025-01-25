@@ -4,6 +4,6 @@ namespace StocksApp.Application.Interfaces.Finnhub
 {
     public interface IFinnhubStockSearchService
     {
-        Task<StockSearch?> SearchStocks(string symbol);
+        Task<IEnumerable<StockSearch>?> SearchStocks(string symbol);
     }
 }

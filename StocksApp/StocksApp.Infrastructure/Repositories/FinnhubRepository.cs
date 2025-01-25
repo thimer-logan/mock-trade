@@ -30,7 +30,12 @@ namespace StocksApp.Infrastructure.Repositories
 
         public async Task<CompanyProfile?> GetCompanyProfileAsync(string symbol)
         {
-            var response = await _httpClient.GetAsync($"/api/v1/stock/profile2?symbol={symbol}&token={_apiKey}");
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                throw new ArgumentNullException(nameof(symbol));
+            }
+
+            var response = await _httpClient.GetAsync($"/api/v1/stock/profile2?symbol={symbol.ToUpper()}&token={_apiKey}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -52,7 +57,12 @@ namespace StocksApp.Infrastructure.Repositories
 
         public async Task<StockQuote?> GetStockPriceQuoteAsync(string symbol)
         {
-            var response = await _httpClient.GetAsync($"/api/v1/quote?symbol={symbol}&token={_apiKey}");
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                throw new ArgumentNullException(nameof(symbol));
+            }
+
+            var response = await _httpClient.GetAsync($"/api/v1/quote?symbol={symbol.ToUpper()}&token={_apiKey}");
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
@@ -94,30 +104,33 @@ namespace StocksApp.Infrastructure.Repositories
             return stockData;
         }
 
-        public async Task<List<StockSearch>?> SearchStocksAsync(string symbol)
+        public async Task<IEnumerable<StockSearch>?> SearchStocksAsync(string symbol)
         {
-            //var response = await _httpClient.GetAsync($"/api/v1/search?q={symbol}&token={_apiKey}");
-            //response.EnsureSuccessStatusCode();
+            if (string.IsNullOrWhiteSpace(symbol))
+            {
+                throw new ArgumentNullException(nameof(symbol));
+            }
 
-            //var content = await response.Content.ReadAsStringAsync();
+            var response = await _httpClient.GetAsync($"/api/v1/search?q={symbol.ToUpper()}&token={_apiKey}");
+            response.EnsureSuccessStatusCode();
 
-            //if (string.IsNullOrWhiteSpace(content))
-            //{
-            //    throw new InvalidOperationException("Error fetching stocks from Finnhub.");
-            //}
+            var content = await response.Content.ReadAsStringAsync();
 
-            //if (content.Contains("\"error\""))
-            //{
-            //    throw new InvalidOperationException($"Error fetching stocks from Finnhub: {content}");
-            //}
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                throw new InvalidOperationException("Error fetching stocks from Finnhub.");
+            }
 
-            //// Response has a different structure than the other endpoints
-            //// It has a "count" and "result" key that contains the search results
-            //var searchResults = JsonSerializer.Deserialize<StockSearchResponse>(content)?.Result;
+            if (content.Contains("\"error\""))
+            {
+                throw new InvalidOperationException($"Error fetching stocks from Finnhub: {content}");
+            }
 
+            // Response has a different structure than the other endpoints
+            // It has a "count" and "result" key that contains the search results
+            var searchResults = JsonConvert.DeserializeObject<PaginatedResponse<StockSearch>>(content)?.Result;
 
-            //return searchResults;
-            throw new NotImplementedException();
+            return searchResults;
         }
     }
 }

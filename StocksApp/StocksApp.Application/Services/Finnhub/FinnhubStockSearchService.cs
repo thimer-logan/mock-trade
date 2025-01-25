@@ -13,9 +13,17 @@ namespace StocksApp.Application.Services.Finnhub
             _finnhubRepository = finnhubRepository;
         }
 
-        public Task<StockSearch?> SearchStocks(string symbol)
+        public async Task<IEnumerable<StockSearch>?> SearchStocks(string symbol)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _finnhubRepository.SearchStocksAsync(symbol);
+            }
+            catch (Exception ex)
+            {
+                // Log error
+                return null;
+            }
         }
     }
 }
