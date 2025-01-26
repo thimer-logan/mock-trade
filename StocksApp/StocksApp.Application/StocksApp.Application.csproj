@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Stocks\" />
-    <Folder Include="Services\Stocks\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\StocksApp.Domain\StocksApp.Domain.csproj" />
   </ItemGroup>
 
