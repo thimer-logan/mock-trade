@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using StocksApp.Application.DTO.Stocks;
 using StocksApp.Application.Interfaces.Stocks.Portfolios;
+using StocksApp.Domain.Exceptions;
 using StocksApp.Domain.Interfaces;
 
 namespace StocksApp.Application.Services.Stocks.Portfolios
@@ -20,35 +21,26 @@ namespace StocksApp.Application.Services.Stocks.Portfolios
         }
 
         /// <inheritdoc/>
-        public async Task<PortfolioResponse?> GetPortfolioByIdAsync(Guid portfolioId)
+        public async Task<PortfolioResponse?> GetPortfolioByIdAsync(string userId, Guid portfolioId)
         {
-            try
-            {
-                var portfolio = await _portfolioRepository.GetPortfolioAsync(portfolioId);
-                return portfolio?.ToPortfolioResponse();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting portfolio.");
-            }
+            var portfolio = await _portfolioRepository.GetPortfolioAsync(portfolioId);
 
-            return null;
+            if (portfolio == null)
+            {
+                return null;
+            }
+            if (portfolio.UserId != userId)
+            {
+                throw new UnauthorizedResourceAccessException("User does not have access to this portfolio.");
+            }
+            return portfolio?.ToPortfolioResponse();
         }
 
         /// <inheritdoc/>
         public async Task<IEnumerable<PortfolioResponse>?> GetPortfoliosAsync(string userId)
         {
-            try
-            {
-                var portfolios = await _portfolioRepository.GetPortfoliosByUserAsync(userId);
-                return portfolios?.Select(p => p.ToPortfolioResponse());
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting portfolios.");
-            }
-
-            return null;
+            var portfolios = await _portfolioRepository.GetPortfoliosByUserAsync(userId);
+            return portfolios?.Select(p => p.ToPortfolioResponse());
         }
     }
 }

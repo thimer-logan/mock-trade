@@ -54,7 +54,7 @@ namespace StocksApp.API.Controllers
 
             try
             {
-                var portfolio = await _getPortfolioService.GetPortfolioByIdAsync(id);
+                var portfolio = await _getPortfolioService.GetPortfolioByIdAsync(userId, id);
 
                 if (portfolio == null)
                 {

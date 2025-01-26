@@ -12,7 +12,7 @@ namespace StocksApp.Application.Interfaces.Stocks.Portfolios
         /// </summary>
         /// <param name="portfolioId">Portfolio ID</param>
         /// <returns>User's portfolio</returns>
-        Task<PortfolioResponse?> GetPortfolioByIdAsync(Guid portfolioId);
+        Task<PortfolioResponse?> GetPortfolioByIdAsync(string userId, Guid portfolioId);
 
         /// <summary>
         /// Get all portfolios for a user.
