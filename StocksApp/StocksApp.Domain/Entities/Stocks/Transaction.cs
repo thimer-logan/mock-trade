@@ -46,12 +46,12 @@ namespace StocksApp.Domain.Entities.Stocks
         /// </summary>
         [Required]
         [Precision(18, 2)]
-        public decimal PricePerShare { get; set; }
+        public decimal Price { get; set; }
 
         /// <summary>
         /// Timestamp of when the transaction took place.
         /// </summary>
-        public DateTime ExecutedAt { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     }
 
     /// <summary>
