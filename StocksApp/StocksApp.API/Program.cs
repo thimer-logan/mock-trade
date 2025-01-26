@@ -6,14 +6,10 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
-using StocksApp.Application.Interfaces.Authentication;
-using StocksApp.Application.Interfaces.Finnhub;
-using StocksApp.Application.Services.Authentication;
-using StocksApp.Application.Services.Finnhub;
+using StocksApp.Application;
 using StocksApp.Domain.Entities.Identity;
-using StocksApp.Domain.Interfaces;
+using StocksApp.Infrastructure;
 using StocksApp.Infrastructure.DbContext;
-using StocksApp.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,16 +40,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddTransient<IFinnhubCompanyProfileService, FinnhubCompanyProfileService>();
-builder.Services.AddTransient<IFinnhubStockPriceQuoteService, FinnhubStockPriceQuoteService>();
-builder.Services.AddTransient<IFinnhubStockSearchService, FinnhubStockSearchService>();
-builder.Services.AddTransient<IFinnhubStocksService, FinnhubStocksService>();
-builder.Services.AddTransient<IFinnhubRepository, FinnhubRepository>();
-builder.Services.AddHttpClient<IFinnhubRepository, FinnhubRepository>(client =>
-{
-    var baseUrl = builder.Configuration["Finnhub:BaseUrl"]; client.BaseAddress = new Uri(baseUrl ?? "https://finnhub.io");
-});
-builder.Services.AddTransient<IJwtService, JwtService>();
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
