@@ -2,9 +2,11 @@
 using StocksApp.Application.Interfaces.Authentication;
 using StocksApp.Application.Interfaces.Finnhub;
 using StocksApp.Application.Interfaces.Stocks.Portfolios;
+using StocksApp.Application.Interfaces.Stocks.Transactions;
 using StocksApp.Application.Services.Authentication;
 using StocksApp.Application.Services.Finnhub;
 using StocksApp.Application.Services.Stocks.Portfolios;
+using StocksApp.Application.Services.Stocks.Transactions;
 
 namespace StocksApp.Application
 {
@@ -21,6 +23,9 @@ namespace StocksApp.Application
 
             services.AddScoped<IGetPortfolioService, GetPortfolioService>();
             services.AddScoped<ICreatePortfolioService, CreatePortfolioService>();
+            services.AddScoped<IGetTransactionService, GetTransactionService>();
+            services.AddScoped<IBuyStockService, BuyStockService>();
+            services.AddScoped<ISellStockService, SellStockService>();
 
             return services;
         }

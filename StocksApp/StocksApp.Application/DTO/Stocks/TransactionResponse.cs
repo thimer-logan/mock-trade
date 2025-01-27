@@ -21,8 +21,8 @@ namespace StocksApp.Application.DTO.Stocks
                 Id = transaction.Id,
                 Ticker = transaction.Ticker,
                 Quantity = transaction.Quantity,
-                Price = transaction.PricePerShare,
-                TransactionDate = transaction.ExecutedAt,
+                Price = transaction.Price,
+                TransactionDate = transaction.Timestamp,
                 Type = transaction.Type
             };
         }

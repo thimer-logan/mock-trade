@@ -1,6 +1,6 @@
 @StocksApp.API_HostAddress = http://localhost:5081
 
-GET {{StocksApp.API_HostAddress}}/weatherforecast/
+GET {{StocksApp.API_HostAddress}}/stocks/
 Accept: application/json
 
 ###
