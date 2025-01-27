@@ -30,6 +30,8 @@ namespace StocksApp.Infrastructure.Repositories
         {
             // Return all portfolios for the user.
             return await _dbContext.Portfolios
+                .Include(p => p.Holdings)
+                .Include(p => p.Transactions)
                 .Where(p => p.UserId == userId)
                 .ToListAsync();
         }

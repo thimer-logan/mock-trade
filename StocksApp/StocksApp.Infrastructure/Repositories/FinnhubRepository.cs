@@ -79,6 +79,12 @@ namespace StocksApp.Infrastructure.Repositories
 
             var quote = JsonConvert.DeserializeObject<StockQuote>(content);
 
+            // If the quote is empty, return null
+            if (quote != null && quote.c == 0 && quote.h == 0 && quote.l == 0 && quote.o == 0 && quote.pc == 0)
+            {
+                return null;
+            }
+
             return quote;
         }
 
