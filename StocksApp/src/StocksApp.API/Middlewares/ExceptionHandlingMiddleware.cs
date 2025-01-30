@@ -58,6 +58,11 @@ namespace StocksApp.API.Middlewares
                     message = isEx.Message;
                     break;
 
+                case BadRequestException badRequestEx:
+                    statusCode = StatusCodes.Status400BadRequest;
+                    message = badRequestEx.Message;
+                    break;
+
                 default:
 
                     break;
