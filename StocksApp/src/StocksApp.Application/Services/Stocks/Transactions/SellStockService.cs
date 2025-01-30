@@ -23,6 +23,19 @@ namespace StocksApp.Application.Services.Stocks.Transactions
 
         public async Task<TransactionResponse> SellStockAsync(string userId, Guid portfolioId, SellStockRequest sellStockReq)
         {
+            if (portfolioId == Guid.Empty)
+            {
+                throw new BadRequestException("Portfolio Id is required.");
+            }
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new BadRequestException("User Id is required.");
+            }
+            if (string.IsNullOrEmpty(sellStockReq.Ticker))
+            {
+                throw new BadRequestException("Ticker is required.");
+            }
+
             var portfolio = await _portfolioRepository.GetPortfolioAsync(portfolioId);
             if (portfolio == null)
             {

@@ -18,6 +18,19 @@ namespace StocksApp.Application.Services.Stocks.Transactions
 
         public async Task<TransactionResponse> GetTransactionByIdAsync(string userId, Guid portfolioId, Guid id)
         {
+            if (id == Guid.Empty)
+            {
+                throw new BadRequestException("Transaction Id is required.");
+            }
+            if (portfolioId == Guid.Empty)
+            {
+                throw new BadRequestException("Portfolio Id is required.");
+            }
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new BadRequestException("User Id is required.");
+            }
+
             var portfolio = await _portfolioRepository.GetPortfolioAsync(portfolioId);
             if (portfolio == null)
             {
@@ -39,6 +52,15 @@ namespace StocksApp.Application.Services.Stocks.Transactions
 
         public async Task<IEnumerable<TransactionResponse>> GetTransactionsAsync(string userId, Guid portfolioId)
         {
+            if (portfolioId == Guid.Empty)
+            {
+                throw new BadRequestException("Portfolio Id is required.");
+            }
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new BadRequestException("User Id is required.");
+            }
+
             var portfolio = await _portfolioRepository.GetPortfolioAsync(portfolioId);
             if (portfolio == null)
             {
