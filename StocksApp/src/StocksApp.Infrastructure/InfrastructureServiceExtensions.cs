@@ -12,6 +12,7 @@ namespace StocksApp.Infrastructure
             services.AddScoped<IPortfolioRepository, PortfolioRepository>();
             services.AddScoped<ITransactionRepository, TransactionRepository>();
             services.AddScoped<IHoldingRepository, HoldingRepository>();
+            services.AddScoped<IWatchlistRepository, WatchlistRepository>();
 
             services.AddTransient<IFinnhubRepository, FinnhubRepository>();
             services.AddHttpClient<IFinnhubRepository, FinnhubRepository>(client =>
