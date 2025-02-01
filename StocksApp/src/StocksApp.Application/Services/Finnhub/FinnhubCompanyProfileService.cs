@@ -15,17 +15,12 @@ namespace StocksApp.Application.Services.Finnhub
 
         public async Task<CompanyProfile?> GetCompanyProfile(string symbol)
         {
-            try
+            if (string.IsNullOrWhiteSpace(symbol))
             {
-                return await _finnhubRepository.GetCompanyProfileAsync(symbol);
-            }
-            catch (Exception ex)
-            {
-                //FinnhubException finnhubException = new FinnhubException("Unable to connect to finnhub", ex);
-                //throw finnhubException;
+                throw new ArgumentNullException(nameof(symbol));
             }
 
-            return null;
+            return await _finnhubRepository.GetCompanyProfileAsync(symbol);
         }
     }
 }

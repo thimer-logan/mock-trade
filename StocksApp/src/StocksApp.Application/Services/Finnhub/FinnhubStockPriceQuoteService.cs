@@ -15,15 +15,12 @@ namespace StocksApp.Application.Services.Finnhub
 
         public async Task<StockQuote?> GetStockPriceQuote(string symbol)
         {
-            try
+            if (string.IsNullOrWhiteSpace(symbol))
             {
-                return await _finnhubRepository.GetStockPriceQuoteAsync(symbol);
+                throw new ArgumentNullException(nameof(symbol));
             }
-            catch (Exception ex)
-            {
-                // Log error
-                return null;
-            }
+
+            return await _finnhubRepository.GetStockPriceQuoteAsync(symbol);
         }
     }
 }

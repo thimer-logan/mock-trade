@@ -15,15 +15,12 @@ namespace StocksApp.Application.Services.Finnhub
 
         public async Task<IEnumerable<StockSearch>?> SearchStocks(string symbol)
         {
-            try
+            if (string.IsNullOrWhiteSpace(symbol))
             {
-                return await _finnhubRepository.SearchStocksAsync(symbol);
+                throw new ArgumentNullException(nameof(symbol));
             }
-            catch (Exception ex)
-            {
-                // Log error
-                return null;
-            }
+
+            return await _finnhubRepository.SearchStocksAsync(symbol);
         }
     }
 }

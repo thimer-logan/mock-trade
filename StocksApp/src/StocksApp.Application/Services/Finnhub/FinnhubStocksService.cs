@@ -15,15 +15,7 @@ namespace StocksApp.Application.Services.Finnhub
 
         public async Task<IEnumerable<Stock>?> GetStocks()
         {
-            try
-            {
-                return await _finnhubRepository.GetStocksAsync();
-            }
-            catch (Exception ex)
-            {
-                // Log error
-                return null;
-            }
+            return await _finnhubRepository.GetStocksAsync();
         }
     }
 }
