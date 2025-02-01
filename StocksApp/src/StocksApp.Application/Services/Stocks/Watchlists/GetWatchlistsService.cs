@@ -58,6 +58,11 @@ namespace StocksApp.Application.Services.Stocks.Watchlists
 
         public Task<IEnumerable<WatchlistResponse>> GetWatchlistsAsync(string userId)
         {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentException("User ID cannot be null or empty", nameof(userId));
+            }
+
             return _watchlistRepository.GetWatchlistsAsync(userId)
                 .ContinueWith(t => t.Result.Select(w => w.ToWatchlistResponse()));
         }

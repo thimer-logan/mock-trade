@@ -23,6 +23,11 @@ namespace StocksApp.Application.Services.Stocks.Portfolios
         /// <inheritdoc/>
         public async Task<PortfolioResponse?> GetPortfolioByIdAsync(string userId, Guid portfolioId)
         {
+            if (portfolioId == Guid.Empty)
+            {
+                throw new ArgumentException("Portfolio ID cannot be empty", nameof(portfolioId));
+            }
+
             var portfolio = await _portfolioRepository.GetPortfolioAsync(portfolioId);
 
             if (portfolio == null)
