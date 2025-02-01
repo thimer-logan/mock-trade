@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StocksApp.Infrastructure", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StocksApp.UnitTests", "tests\StocksApp.UnitTests\StocksApp.UnitTests.csproj", "{BBAFE82D-8D7B-4048-936A-0A59E40A8C16}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B510CB48-7C78-479B-8B17-76D9EB267DF8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{D4CC8E44-A291-475D-9EC1-B66B4946ED11}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +46,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2CA7BF69-40F4-419A-8991-7B88D6F4D081} = {B510CB48-7C78-479B-8B17-76D9EB267DF8}
+		{C30677D8-8860-4FAC-A9C1-4F00D0F790B2} = {B510CB48-7C78-479B-8B17-76D9EB267DF8}
+		{E740B838-D807-4F5E-998A-5AA8C56A71F3} = {B510CB48-7C78-479B-8B17-76D9EB267DF8}
+		{085363F5-B2FF-49FE-9A67-58BCDFC2931C} = {B510CB48-7C78-479B-8B17-76D9EB267DF8}
+		{BBAFE82D-8D7B-4048-936A-0A59E40A8C16} = {D4CC8E44-A291-475D-9EC1-B66B4946ED11}
 	EndGlobalSection
 EndGlobal

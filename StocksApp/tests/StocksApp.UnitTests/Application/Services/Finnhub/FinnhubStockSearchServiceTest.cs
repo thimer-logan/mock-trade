@@ -6,54 +6,54 @@ using StocksApp.Domain.Interfaces;
 
 namespace StocksApp.UnitTests.Application.Services.Finnhub
 {
-    public class FinnhubCompanyProfileServiceTest
+    public class FinnhubStockSearchServiceTest
     {
-        private readonly IFinnhubCompanyProfileService _service;
+        private readonly IFinnhubStockSearchService _service;
         private readonly Mock<IFinnhubRepository> _finnhubRepositoryMock;
 
-        public FinnhubCompanyProfileServiceTest()
+        public FinnhubStockSearchServiceTest()
         {
             _finnhubRepositoryMock = new Mock<IFinnhubRepository>();
-            _service = new FinnhubCompanyProfileService(_finnhubRepositoryMock.Object);
+            _service = new FinnhubStockSearchService(_finnhubRepositoryMock.Object);
         }
 
         [Fact]
-        public async Task GetCompanyProfile_WhenSymbolIsEmpty_ThrowsArgumentNullException()
+        public async Task SearchStocks_WhenSymbolIsEmpty_ThrowsArgumentNullException()
         {
             // Arrange
             string symbol = string.Empty;
 
             // Act
-            Func<Task> act = async () => await _service.GetCompanyProfile(symbol);
+            Func<Task> act = async () => await _service.SearchStocks(symbol);
 
             // Assert
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
-        public async Task GetCompanyProfile_WhenSymbolIsWhiteSpace_ThrowsArgumentNullException()
+        public async Task SearchStocks_WhenSymbolIsWhiteSpace_ThrowsArgumentNullException()
         {
             // Arrange
             string symbol = " ";
 
             // Act
-            Func<Task> act = async () => await _service.GetCompanyProfile(symbol);
+            Func<Task> act = async () => await _service.SearchStocks(symbol);
 
             // Assert
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
-        public async Task GetCompanyProfile_ValidSymbol_CallsGetCompanyProfileAsync()
+        public async Task SearchStocks_ValidSymbol_CallsSearchStocksAsync()
         {
             // Arrange
             string symbol = "AAPL";
 
             // Act
-            await _service.GetCompanyProfile(symbol);
+            await _service.SearchStocks(symbol);
 
             // Assert
-            _finnhubRepositoryMock.Verify(x => x.GetCompanyProfileAsync(symbol), Times.Once);
+            _finnhubRepositoryMock.Verify(x => x.SearchStocksAsync(symbol), Times.Once);
         }
     }
 }

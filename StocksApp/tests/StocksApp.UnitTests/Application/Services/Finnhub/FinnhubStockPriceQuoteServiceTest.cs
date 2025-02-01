@@ -6,54 +6,54 @@ using StocksApp.Domain.Interfaces;
 
 namespace StocksApp.UnitTests.Application.Services.Finnhub
 {
-    public class FinnhubCompanyProfileServiceTest
+    public class FinnhubStockPriceQuoteServiceTest
     {
-        private readonly IFinnhubCompanyProfileService _service;
+        private readonly IFinnhubStockPriceQuoteService _service;
         private readonly Mock<IFinnhubRepository> _finnhubRepositoryMock;
 
-        public FinnhubCompanyProfileServiceTest()
+        public FinnhubStockPriceQuoteServiceTest()
         {
             _finnhubRepositoryMock = new Mock<IFinnhubRepository>();
-            _service = new FinnhubCompanyProfileService(_finnhubRepositoryMock.Object);
+            _service = new FinnhubStockPriceQuoteService(_finnhubRepositoryMock.Object);
         }
 
         [Fact]
-        public async Task GetCompanyProfile_WhenSymbolIsEmpty_ThrowsArgumentNullException()
+        public async Task GetStockPriceQuote_WhenSymbolIsEmpty_ThrowsArgumentNullException()
         {
             // Arrange
             string symbol = string.Empty;
 
             // Act
-            Func<Task> act = async () => await _service.GetCompanyProfile(symbol);
+            Func<Task> act = async () => await _service.GetStockPriceQuote(symbol);
 
             // Assert
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
-        public async Task GetCompanyProfile_WhenSymbolIsWhiteSpace_ThrowsArgumentNullException()
+        public async Task GetStockPriceQuote_WhenSymbolIsWhiteSpace_ThrowsArgumentNullException()
         {
             // Arrange
             string symbol = " ";
 
             // Act
-            Func<Task> act = async () => await _service.GetCompanyProfile(symbol);
+            Func<Task> act = async () => await _service.GetStockPriceQuote(symbol);
 
             // Assert
             await act.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
-        public async Task GetCompanyProfile_ValidSymbol_CallsGetCompanyProfileAsync()
+        public async Task GetStockPriceQuote_ValidSymbol_CallsGetStockPriceQuoteAsync()
         {
             // Arrange
             string symbol = "AAPL";
 
             // Act
-            await _service.GetCompanyProfile(symbol);
+            await _service.GetStockPriceQuote(symbol);
 
             // Assert
-            _finnhubRepositoryMock.Verify(x => x.GetCompanyProfileAsync(symbol), Times.Once);
+            _finnhubRepositoryMock.Verify(x => x.GetStockPriceQuoteAsync(symbol), Times.Once);
         }
     }
 }
